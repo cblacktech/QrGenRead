@@ -1,0 +1,3 @@
+import qrgui
+
+qrgui.main()
