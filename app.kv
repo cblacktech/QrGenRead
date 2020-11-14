@@ -2,3 +2,23 @@ BoxLayout:
     orientation: 'vertical'
     Image:
         id: cameraImage
+
+<QrCamScreen>:
+    camera: cam
+    take_pic: take_pic
+
+    BoxLayout:
+        orientation: 'vertical'
+        Camera:
+            id: cam
+            index: 0
+#            resolution: (1280, 720)
+            resolution: (1920, 1080)
+            play: True
+            size_hint_y: 8
+        Button:
+            id: take_pic
+            text: 'Take Photo'
+            size_hint: (.2, .4)
+            pos_hint: {'x': .39, 'y': .75}
+            on_press: root.onCameraClick()
