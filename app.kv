@@ -16,9 +16,41 @@ BoxLayout:
             resolution: (1920, 1080)
             play: True
             size_hint_y: 8
-        Button:
-            id: take_pic
-            text: 'Take Photo'
-            size_hint: (.2, .4)
-            pos_hint: {'x': .39, 'y': .75}
-            on_press: root.onCameraClick()
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                id: take_pic
+                text: 'Take Photo'
+                size_hint: (.2, .4)
+#                pos_hint: {'x': .39, 'y': .75}
+                on_release: root.onCameraClick()
+            Button:
+                text: 'Creator'
+                size_hint: (.2, .4)
+#                pos_hint: {'x': .39, 'y': .75}
+                on_release:
+                    root.manager.transition.direction = 'left'
+                    root.manager.transition.duration = .5
+                    root.manager.current = 'creator'
+
+<QrCreatorScreen>:
+    qr_img: qr_image
+
+    BoxLayout:
+        orientation: 'vertical'
+        Image:
+            id: qr_image
+        TextInput:
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'Save'
+                size_hint: (.2, .4)
+            Button:
+                text: 'Scan'
+                size_hint: (.2, .4)
+    #            pos_hint: {'x': .39, 'y': .75}
+                on_release:
+                    root.manager.transition.direction = 'right'
+                    root.manager.transition.duration = .5
+                    root.manager.current = 'cam'
