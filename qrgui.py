@@ -32,9 +32,12 @@ if platform == "android":
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.popup import Popup
 from kivy.uix.camera import Camera
-from kivy.uix.image import Image
+from kivy.uix.image import Image as kiImage
+from kivy.core.image import Image as CoreImage
+from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen, ScreenManager
 
