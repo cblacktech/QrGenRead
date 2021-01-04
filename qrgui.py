@@ -1,9 +1,16 @@
+import os
+import sys
+import time
+import tempfile
+from pathlib import Path
 import numpy
+from plyer.facades import storagepath
 import qrcode
 import cv2
 import PIL.Image
 import kivy
 from kivy.app import App
+from kivy.utils import platform
 
 if platform == "android":
     from android.permissions import request_permissions, Permission
