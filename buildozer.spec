@@ -86,7 +86,7 @@ fullscreen = 0
 
 # (list) Permissions
 #android.permissions = INTERNET, CAMERA
-android.permissions = CAMERA
+android.permissions = CAMERA, WRITE_EXTERNAL_STORAGE
 
 # (int) Target Android API, should be as high as possible.
 #android.api = 27
