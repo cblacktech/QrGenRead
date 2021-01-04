@@ -34,23 +34,87 @@ BoxLayout:
                     root.manager.current = 'creator'
 
 <QrCreatorScreen>:
-    qr_img: qr_image
+    qr_image: qr_image
+    qr_data: qr_data
 
     BoxLayout:
         orientation: 'vertical'
         Image:
             id: qr_image
+            source: ''
         TextInput:
+            id: qr_data
+            size_hint_y: .4
         BoxLayout:
             orientation: 'horizontal'
+            # size_hint_y: .4
+            Button:
+                text: 'Generate'
+                size_hint: (.2, .4)
+                on_release:
+                    root.generate_qr_image()
+            Button:
+                text: 'Clear'
+                size_hint: (.2, .4)
+                on_release:
+                    root.clear_image()
             Button:
                 text: 'Save'
                 size_hint: (.2, .4)
+                on_release:
+                    root.save_qr_image()
             Button:
-                text: 'Scan'
+                text: 'Reader'
                 size_hint: (.2, .4)
     #            pos_hint: {'x': .39, 'y': .75}
                 on_release:
+                    root.manager.transition.direction = 'left'
+                    root.manager.transition.duration = .5
+                    root.manager.current = 'reader'
+
+<QrReaderScreen>:
+    qr_image: qr_image
+    qr_data: qr_data
+
+    BoxLayout:
+        orientation: 'vertical'
+        Image:
+            id: qr_image
+            source: ''
+        TextInput:
+            id: qr_data
+            readonly: True
+            size_hint_y: .4
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'Select'
+                size_hint: (.2, .4)
+                on_release:
+                    root.select_image()
+            Button:
+                text: 'Scan'
+                size_hint: (.2, .4)
+                on_release:
+                    root.scan_image()
+            Button:
+                text: 'Creator'
+                size_hint: (.2, .4)
+#                pos_hint: {'x': .39, 'y': .75}
+                on_release:
                     root.manager.transition.direction = 'right'
                     root.manager.transition.duration = .5
-                    root.manager.current = 'cam'
+                    root.manager.current = 'creator'
+
+<FileChooserPopup@Popup>:
+    title: 'File Selector'
+    autodismiss: 'False'
+    BoxLayout:
+        orientation: 'vertical'
+        FileChooserListView:
+            path: '/'
+        Button:
+            text: 'Select File'
+            size_hint_y: .4
+            on_release:
+                root.dismiss()

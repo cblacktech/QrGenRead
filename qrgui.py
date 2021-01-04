@@ -44,6 +44,16 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 kivy.require('2.0.0')
 ui = Builder.load_file('app.kv')
 
+from plyer import storagepath
+from plyer import filechooser
+
+
+# class QrCamScreen(Screen):
+#     camera = ObjectProperty(None)
+#     detector = cv2.QRCodeDetector()
+
+#     def onCameraClick(self, pic_name='pic', *args):
+#         self.camera.export_to_png(f'./{pic_name}.png')
 
 class QrCamScreen(Screen):
     camera = ObjectProperty(None)
@@ -66,14 +76,71 @@ class QrCamScreen(Screen):
     def detect_schedule_once(self, interval=1.0):
         Clock.schedule_once(self.tryDetect, interval)
 
-    def tryDetect(self, *args):
-        img = cv2.cvtColor(numpy.array(self.generate_pic_in_memory()), cv2.COLOR_RGBA2BGRA)
-        data, bbox, straight_qrcode = self.detector.detectAndDecode(img)
-        if data:
-            print('QR Code detected -->', data)
-            self.onCameraClick('qrdetect')
-            return
-        self.detect_schedule_once(interval=.5)
+class QrCreatorScreen(Screen):
+    qr_image = ObjectProperty(None)
+    qr_data = ObjectProperty(None)
+
+    def generate_qr_image(self, *args):
+        data = str(self.qr_data.text)
+        qr = qrcode.QRCode(version=1, box_size=10, border=4)
+        qr.add_data(data)
+        qr.make()
+        img = qr.make_image(fill_color="black", back_color="white")
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        if platform == "android":
+            img_name = str(Path.joinpath(Path(storagepath.get_pictures_dir()), 'qrgenread', f'QR_{timestr}.png'))
+            try:
+                os.mkdir(Path.joinpath(Path(storagepath.get_pictures_dir()), 'qrgenread'))
+            except Exception:
+                pass
+            # if Path.exists(img_name):
+            #     img_name = img_name.split('.')[-1]
+        else:
+            img_name = str(Path.joinpath(Path('qrgenread'), f'QR_{timestr}.png'))
+            try:
+                os.mkdir(Path('qrgenread'))
+            except Exception:
+                pass
+        print(img_name)
+        self.display_qr_image(img, img_name)
+        return (img, img_name)
+
+    def save_qr_image(self, *args):
+        img, img_name = self.generate_qr_image()
+        img.save(img_name)
+        print(f'{img_name} saved')
+        return img_name
+
+    def display_qr_image(self, img, img_name, *args_):
+        with tempfile.NamedTemporaryFile() as temp:
+            img.save(temp, format=img_name.split('.')[-1])
+            self.qr_image.source = temp.name
+    
+    def clear_image(self, *args):
+        self.qr_image.source = ''
+        self.qr_data.text = ''
+
+
+class QrReaderScreen(Screen):
+    qr_image = ObjectProperty(None)
+    qr_data = ObjectProperty(None)
+
+    def select_image(self, *args):
+        if platform == "android":
+            file = filechooser.open_file()
+        else:
+            self.show_chooser_popup()
+
+    def scan_image(self, *args):
+        pass
+    
+    def show_chooser_popup(self, *args):
+        popup = FileChooserPopup()
+        popup.open()
+
+
+class FileChooserPopup(Popup):
+    pass
 
 
 class QrApp(App):
