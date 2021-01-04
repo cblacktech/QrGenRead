@@ -1,0 +1,9 @@
+qrcode==6.1
+buildozer==1.2.0
+kivy==2.0.0
+opencv-python==4.5.1.48
+pillow==8.1.0
+numpy==1.19.4
+cython==0.29.21
+python-for-android
+plyer
