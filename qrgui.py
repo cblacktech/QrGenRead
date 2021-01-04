@@ -38,7 +38,7 @@ from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen, ScreenManager
 
-kivy.require('1.11.1')
+kivy.require('2.0.0')
 ui = Builder.load_file('app.kv')
 
 
