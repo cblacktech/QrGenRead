@@ -5,7 +5,9 @@ import PIL.Image
 import kivy
 from kivy.app import App
 
-# from android.permissions import request_permissions, Permission
+if platform == "android":
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.CAMERA])
 
 # from kivy.logger import Logger
 # import logging
