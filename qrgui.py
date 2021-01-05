@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy
 from plyer.facades import storagepath
 import qrcode
-import cv2
+# import cv2
 import PIL.Image
 import kivy
 from kivy.app import App
@@ -55,26 +55,27 @@ from plyer import filechooser
 #     def onCameraClick(self, pic_name='pic', *args):
 #         self.camera.export_to_png(f'./{pic_name}.png')
 
-class QrCamScreen(Screen):
-    camera = ObjectProperty(None)
-    detector = cv2.QRCodeDetector()
+#     def generate_pic_in_memory(self, *args):
+#         pixels_data = self.camera.texture.get_region(x=self.camera.x, y=self.camera.y,
+#                                                      width=self.camera.resolution[0],
+#                                                      height=self.camera.resolution[1]).pixels
+#         image = PIL.Image.frombytes(mode="RGBA", size=(int(self.camera.resolution[0]),
+#                                                        int(self.camera.resolution[1])),
+#                                     data=pixels_data)
+#         return image
 
-    def onCameraClick(self, pic_name='pic', *args):
-        # self.cameraObject.export_to_png('/storage/emulated/0/test.png')
-        self.camera.export_to_png(f'./{pic_name}.png')
-        # self.cameraObject.take_picture('./test.png', None)
+#     def detect_schedule_once(self, interval=1.0):
+#         Clock.schedule_once(self.tryDetect(img=self.generate_pic_in_memory()), interval)
 
-    def generate_pic_in_memory(self, *args):
-        pixels_data = self.camera.texture.get_region(x=self.camera.x, y=self.camera.y,
-                                                     width=self.camera.resolution[0],
-                                                     height=self.camera.resolution[1]).pixels
-        image = PIL.Image.frombytes(mode="RGBA", size=(int(self.camera.resolution[0]),
-                                                       int(self.camera.resolution[1])),
-                                    data=pixels_data)
-        return image
+#     def tryDetect(self, img, *args):
+#         img = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGBA2BGRA)
+#         data, bbox, straight_qrcode = self.detector.detectAndDecode(img)
+#         if data:
+#             print('QR Code detected -->', data)
+#             self.onCameraClick('qrdetect')
+#             return
+#         self.detect_schedule_once(interval=.5)
 
-    def detect_schedule_once(self, interval=1.0):
-        Clock.schedule_once(self.tryDetect, interval)
 
 class QrCreatorScreen(Screen):
     qr_image = ObjectProperty(None)
@@ -147,8 +148,15 @@ class QrApp(App):
     def build(self):
         self.sm = ScreenManager()
 
-        cam_screen = QrCamScreen(name='cam')
-        self.sm.add_widget(cam_screen)
+        # cam_screen = QrCamScreen(name='camera')
+        creator_screen = QrCreatorScreen(name='creator')
+        reader_screen = QrReaderScreen(name='reader')
+
+        # self.sm.add_widget(cam_screen)
+        self.sm.add_widget(creator_screen)
+        self.sm.add_widget(reader_screen)
+
+        self.sm.current = 'creator'
 
         # layout = BoxLayout(orientation='vertical')
 
@@ -166,32 +174,9 @@ class QrApp(App):
         # layout.add_widget(self.cameraObject)
         # layout.add_widget(self.camaraClick)
 
-        cam_screen.detect_schedule_once(interval=.5)
+        # cam_screen.detect_schedule_once(interval=.5)
 
         return self.sm
-
-    # def onCameraClick(self, *args):
-    #     # self.cameraObject.export_to_png('/storage/emulated/0/test.png')
-    #     self.cameraObject.export_to_png('./test.png')
-    #     # self.cameraObject.take_picture('./test.png', None)
-    #
-    # def generate_pic_in_memory(self, *args):
-    #     pixels_data = self.cameraObject.texture.get_region(x=self.cameraObject.x, y=self.cameraObject.y,
-    #                                                        width=self.cameraObject.resolution[0],
-    #                                                        height=self.cameraObject.resolution[1]).pixels
-    #     image = PIL.Image.frombytes(mode="RGBA", size=(int(self.cameraObject.resolution[0]),
-    #                                                    int(self.cameraObject.resolution[1])),
-    #                                 data=pixels_data)
-    #     # image.save('./out.png')
-    #     return image
-    #
-    # def tryDetect(self, *args):
-    #     img = cv2.cvtColor(numpy.array(self.generate_pic_in_memory()), cv2.COLOR_RGBA2BGRA)
-    #     data, bbox, straight_qrcode = self.detector.detectAndDecode(img)
-    #     if data:
-    #         print('QR Code detected -->', data)
-    #         return
-    #     Clock.schedule_once(self.tryDetect, .5)
 
 
 def main():
