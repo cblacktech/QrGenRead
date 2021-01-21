@@ -141,7 +141,20 @@ class QrReaderScreen(Screen):
 
 
 class FileChooserPopup(Popup):
-    pass
+    chooser = ObjectProperty(None)
+    path = StringProperty('')
+
+    def get_path(self):
+        if platform == "android":
+            self.path = str(Path.joinpath(Path(storagepath.get_pictures_dir()), 'qrgenread'))
+        else:
+            # self.path = Path('qrgenread')
+            self.path = str(Path(''))
+        return self.path
+
+    def dismiss_popup(self, *args):
+        print(self.chooser.selection)
+        self.dismiss()
 
 
 class QrApp(App):
