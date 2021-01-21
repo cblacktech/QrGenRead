@@ -158,7 +158,17 @@ class QrReaderScreen(Screen):
     
     def show_chooser_popup(self, *args):
         popup = FileChooserPopup()
+        popup.bind(on_dismiss=lambda e: self.popup_callback(e))
         popup.open()
+
+    def popup_callback(self, instance):
+        self.files = instance.chooser.selection
+        result, img = self.scan_image()
+        self.qr_data.text = codecs.decode(result)
+        with tempfile.NamedTemporaryFile() as temp:
+            img.save(temp, format='png')
+            self.qr_image.source = temp.name
+        # self.qr_image.source = img
 
 
 class FileChooserPopup(Popup):
