@@ -41,40 +41,58 @@ from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen, ScreenManager
 
+from plyer import storagepath
+from plyer import notification
+
 kivy.require('2.0.0')
 ui = Builder.load_file('app.kv')
 
-from plyer import storagepath
-from plyer import filechooser
 
+class QrCamScreen(Screen):
+    camera = ObjectProperty(None)
+    # detector = cv2.QRCodeDetector()
 
-# class QrCamScreen(Screen):
-#     camera = ObjectProperty(None)
-#     detector = cv2.QRCodeDetector()
+    def try_detect_go(self, *args):
+        result = try_detect(img=self.generate_pic_in_memory())
+        print(f'RESULT: {str(result)}')
 
-#     def onCameraClick(self, pic_name='pic', *args):
-#         self.camera.export_to_png(f'./{pic_name}.png')
+    def create_detect_task(self, interval=1.0, *args):
+        self.detect_task = Clock.schedule_interval(try_detect(img=self.generate_pic_in_memory()), 1.0 / 60.0)
 
-#     def generate_pic_in_memory(self, *args):
-#         pixels_data = self.camera.texture.get_region(x=self.camera.x, y=self.camera.y,
-#                                                      width=self.camera.resolution[0],
-#                                                      height=self.camera.resolution[1]).pixels
-#         image = PIL.Image.frombytes(mode="RGBA", size=(int(self.camera.resolution[0]),
-#                                                        int(self.camera.resolution[1])),
-#                                     data=pixels_data)
-#         return image
+    def detect_click(self, state, pic_name='pic', *args):
+        if state == 'down':
+            print('Starting Scan')
+            Clock.unschedule(self.try_detect_go())
+            Clock.schedule_interval(self.try_detect_go(), 1.0 / 60.0)
+            # self.trigger()
+        else:
+            print('Stopping Scan')
+            # self.detect_task.stop()
+            Clock.unschedule(self.try_detect_go())
+        # self.camera.export_to_png(f'./{pic_name}.png')
+        # img = self.generate_pic_in_memory()
+        # print('pic taken')
+        # self.detect_schedule_once(1)
 
-#     def detect_schedule_once(self, interval=1.0):
-#         Clock.schedule_once(self.tryDetect(img=self.generate_pic_in_memory()), interval)
+    def generate_pic_in_memory(self, *args):
+        print('attempting pic generation')
+        try:
+            pixels_data = self.camera.texture.pixels
+            image = PIL.Image.frombytes(mode="RGBA", size=(int(self.camera.resolution[0]),
+                                                           int(self.camera.resolution[1])), data=pixels_data)
+        # print('pixel image')
+        # print(type(image))
+        # print('camera image')
+        # print(type(self.camera.export_as_image()))
+            print('pic generated')
+            return image
+            # return self.camera.export_as_image()
+        except AttributeError as e:
+            print(e)
+            pass
 
-#     def tryDetect(self, img, *args):
-#         img = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGBA2BGRA)
-#         data, bbox, straight_qrcode = self.detector.detectAndDecode(img)
-#         if data:
-#             print('QR Code detected -->', data)
-#             self.onCameraClick('qrdetect')
-#             return
-#         self.detect_schedule_once(interval=.5)
+    def detect_schedule_once(self, interval=1.0):
+        Clock.schedule_once(try_detect(img=self.generate_pic_in_memory()), interval)
 
 
 class QrCreatorScreen(Screen):
@@ -104,11 +122,13 @@ class QrCreatorScreen(Screen):
                 pass
         print(img_name)
         self.display_qr_image(img, img_name)
-        return (img, img_name)
+        return img, img_name
 
     def save_qr_image(self, *args):
         img, img_name = self.generate_qr_image()
         img.save(img_name)
+        notification.notify(title="image saved", message=f"{img_name} saved", toast=False)
+        notification.notify(message=f"{img_name} saved", timeout=4, toast=True)
         print(f'{img_name} saved')
         return img_name
 
@@ -116,7 +136,7 @@ class QrCreatorScreen(Screen):
         with tempfile.NamedTemporaryFile() as temp:
             img.save(temp, format=img_name.split('.')[-1])
             self.qr_image.source = temp.name
-    
+
     def clear_image(self, *args):
         self.qr_image.source = ''
         self.qr_data.text = ''
@@ -125,19 +145,34 @@ class QrCreatorScreen(Screen):
 class QrReaderScreen(Screen):
     qr_image = ObjectProperty(None)
     qr_data = ObjectProperty(None)
-
-    def select_image(self, *args):
-        if platform == "android":
-            file = filechooser.open_file()
-        else:
-            self.show_chooser_popup()
+    files = ObjectProperty(None)
 
     def scan_image(self, *args):
-        pass
-    
-    def show_chooser_popup(self, *args):
+        try:
+            if len(self.files) > 0:
+                print(f"FILE SELECTED: {self.files}")
+                with PIL.Image.open(self.files[0], 'r') as img:
+                    result = try_detect(img=img)
+                    # print(result)
+                    return result, img
+        except PIL.UnidentifiedImageError:
+            print("NO VALID IMAGE SELECTED")
+            # TODO: throw error popup
+        return None
+
+    def show_popup(self, *args):
         popup = FileChooserPopup()
+        popup.bind(on_dismiss=lambda e: self.popup_callback(e))
         popup.open()
+
+    def popup_callback(self, instance):
+        self.files = instance.chooser.selection
+        result, img = self.scan_image()
+        self.qr_data.text = codecs.decode(result)
+        with tempfile.NamedTemporaryFile() as temp:
+            img.save(temp, format='png')
+            self.qr_image.source = temp.name
+        # self.qr_image.source = img
 
 
 class FileChooserPopup(Popup):
@@ -170,26 +205,31 @@ class QrApp(App):
         self.sm.add_widget(reader_screen)
 
         self.sm.current = 'creator'
+        # self.sm.current = 'camera'
+        # cam_screen.create_detect_task()
+        # cam_screen.trigger = Clock.create_trigger(cam_screen.try_detect_go())
 
-        # layout = BoxLayout(orientation='vertical')
-
-        # self.cam = cv2.VideoCapture()
-        # self.detector = cv2.QRCodeDetector()
-
-        # self.cameraObject = Camera(resolution=(1280, 720), play=True, index=0)
-        # self.cameraObject.size_hint_y = 8
-
-        # self.camaraClick = Button(text="Take Photo")
-        # self.camaraClick.size_hint = (.5, .2)
-        # self.camaraClick.pos_hint = {'x': .25, 'y': .75}
-        # self.camaraClick.bind(on_press=self.onCameraClick)
-
-        # layout.add_widget(self.cameraObject)
-        # layout.add_widget(self.camaraClick)
-
-        # cam_screen.detect_schedule_once(interval=.5)
+        # cam_screen.detect_schedule_once(interval=4)
+        # cam_screen.camera.on_texture(cam_screen.detect_schedule_once(1.0))
 
         return self.sm
+
+
+def try_detect(img, *args):
+    try:
+        result = qr_decode(img)
+        print('try detect img')
+        # self.camera.texture_update()
+        if len(result) > 0:
+            # print('QR Code detected -->', result[0][0].decode('utf-8'))
+            print('QR Code detected -->', result[0][0])
+            # self.on_camera_click('qrdetect')
+            # self.detect_task.stop()
+            return result[0][0]
+        # self.detect_schedule_once(interval=.5)
+    except Exception as e:
+        raise e
+    return None
 
 
 def main():
