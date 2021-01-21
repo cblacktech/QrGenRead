@@ -42,7 +42,6 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen, ScreenManager
 
 from plyer import storagepath
-from plyer import filechooser
 from plyer import notification
 
 kivy.require('2.0.0')
@@ -146,12 +145,7 @@ class QrCreatorScreen(Screen):
 class QrReaderScreen(Screen):
     qr_image = ObjectProperty(None)
     qr_data = ObjectProperty(None)
-
-    def select_image(self, *args):
-        if platform == "android":
-            file = filechooser.open_file()
-        else:
-            self.show_chooser_popup()
+    files = ObjectProperty(None)
 
     def scan_image(self, *args):
         try:
