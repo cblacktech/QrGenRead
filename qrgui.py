@@ -41,12 +41,12 @@ from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen, ScreenManager
 
-kivy.require('2.0.0')
-ui = Builder.load_file('app.kv')
-
 from plyer import storagepath
 from plyer import filechooser
+from plyer import notification
 
+kivy.require('2.0.0')
+ui = Builder.load_file('app.kv')
 
 
 class QrCamScreen(Screen):
