@@ -3,5 +3,5 @@ __pycache__
 .idea
 .buildozer
 bin
-*.png
 qrgenread
+!data
