@@ -128,6 +128,8 @@ class QrCreatorScreen(Screen):
     def save_qr_image(self, *args):
         img, img_name = self.generate_qr_image()
         img.save(img_name)
+        notification.notify(title="image saved", message=f"{img_name} saved", toast=False)
+        notification.notify(message=f"{img_name} saved", timeout=4, toast=True)
         print(f'{img_name} saved')
         return img_name
 
@@ -135,7 +137,7 @@ class QrCreatorScreen(Screen):
         with tempfile.NamedTemporaryFile() as temp:
             img.save(temp, format=img_name.split('.')[-1])
             self.qr_image.source = temp.name
-    
+
     def clear_image(self, *args):
         self.qr_image.source = ''
         self.qr_data.text = ''
