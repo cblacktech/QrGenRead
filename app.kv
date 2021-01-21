@@ -109,14 +109,17 @@
                     root.manager.current = 'creator'
 
 <FileChooserPopup@Popup>:
+    chooser: chooser
+
     title: 'File Selector'
     auto_dismiss: 'False'
     BoxLayout:
         orientation: 'vertical'
         FileChooserListView:
-            path: '/'
+            id: chooser
+            path: root.get_path()
         Button:
             text: 'Select File'
             size_hint_y: .4
             on_release:
-                root.dismiss()
+                root.dismiss_popup()
