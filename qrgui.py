@@ -154,9 +154,19 @@ class QrReaderScreen(Screen):
             self.show_chooser_popup()
 
     def scan_image(self, *args):
-        pass
-    
-    def show_chooser_popup(self, *args):
+        try:
+            if len(self.files) > 0:
+                print(f"FILE SELECTED: {self.files}")
+                with PIL.Image.open(self.files[0], 'r') as img:
+                    result = try_detect(img=img)
+                    # print(result)
+                    return result, img
+        except PIL.UnidentifiedImageError:
+            print("NO VALID IMAGE SELECTED")
+            # TODO: throw error popup
+        return None
+
+    def show_popup(self, *args):
         popup = FileChooserPopup()
         popup.bind(on_dismiss=lambda e: self.popup_callback(e))
         popup.open()
