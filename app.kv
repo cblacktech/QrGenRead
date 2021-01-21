@@ -1,24 +1,30 @@
 <QrCamScreen>:
-    camera: cam
-    take_pic: take_pic
+    camera: camera
 
     BoxLayout:
         orientation: 'vertical'
         Camera:
-            id: cam
+            id: camera
             index: 0
 #            resolution: (1280, 720)
             resolution: (1920, 1080)
             play: True
             size_hint_y: 8
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: -90
+                    origin: self.center
+            canvas.after:
+                PopMatrix
         BoxLayout:
             orientation: 'horizontal'
-            Button:
-                id: take_pic
-                text: 'Take Photo'
+            ToggleButton:
+                text: 'Scan'
                 size_hint: (.2, .4)
 #                pos_hint: {'x': .39, 'y': .75}
-                on_release: root.onCameraClick()
+                on_release:
+                    root.detect_click(state=self.state)
             Button:
                 text: 'Creator'
                 size_hint: (.2, .4)
