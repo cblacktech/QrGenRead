@@ -123,7 +123,7 @@ class QrCreatorScreen(Screen):
                 pass
         print(img_name)
         self.display_qr_image(img, img_name)
-        return (img, img_name)
+        return img, img_name
 
     def save_qr_image(self, *args):
         img, img_name = self.generate_qr_image()
