@@ -1,9 +1,16 @@
+image: ubuntu:latest
+
 stages:
   - build
 
 build_apk_arm64-v8a:
-  image: kivy/buildozer
   stage: build
+  before_script:
+    - apt update -y
+    - apt upgrade -y
+    - apt install -y python3-pip python3-dev build-essential
+    - apt install -y --no-install-recommends default-jdk
+    - pip3 install buildozer cython
   script:
     - buildozer -v android debug
   artifacts:
