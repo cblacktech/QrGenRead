@@ -4,6 +4,8 @@ stages:
 build_apk_arm64-v8a:
   image: kivy/buildozer
   stage: build
+  script:
+    - buildozer -v android debug
   artifacts:
     paths:
       - bin/*.apk
