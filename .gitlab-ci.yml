@@ -8,8 +8,10 @@ build_apk_arm64-v8a:
   before_script:
     - apt update -y
     - apt upgrade -y
+    - echo 2 > input.txt
+    - echo 85 >> input.txt
     - apt install -y python3-pip python3-dev build-essential
-    - apt install -y  git unzip zip ant automake gcc patch libssl-dev libtool
+    - apt install -y  git unzip zip ant cmake automake gcc patch libssl-dev libtool < input.txt
     - apt install -y --no-install-recommends openjdk-8-jdk
     - pip3 install buildozer cython virtualenv
   script:
