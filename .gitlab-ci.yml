@@ -11,6 +11,7 @@ setup_enviorment:
     - apt upgrade -y
     - apt install -y python3-pip python3-dev build-essential
     - apt install -y --no-install-recommends default-jdk
+    - pip3 install buildozer cython
 
 build_apk_arm64-v8a:
   stage: build
