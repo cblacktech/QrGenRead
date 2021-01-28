@@ -14,8 +14,6 @@ setup_enviorment:
 
 build_apk_arm64-v8a:
   stage: build
-  before_script:
-    buildozer --version
   script:
     buildozer -v android debug
   artifacts:
