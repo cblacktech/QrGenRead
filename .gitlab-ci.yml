@@ -1,4 +1,4 @@
-image: ubuntu:latest
+image: archlinux:latest
 
 stages:
   - build
@@ -6,12 +6,16 @@ stages:
 build_apk_arm64-v8a:
   stage: build
   before_script:
-    - apt update -y
-    - apt upgrade -y
-    - apt install -y python3-pip python3-dev build-essential
-    - apt install -y  git unzip zip ant automake gcc patch libssl-dev libtool aidl
-    - DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends default-jdk
-    - pip3 install buildozer cython virtualenv cmake
+    - yes | pacman -Syu
+    - pacman -S git base-devel --noconfirm
+    - yes | pacman -S python python-pip
+    - yes | pacman -S jdk8-openjdk
+    - yes | pacman -S unzip zip ant automake gcc patch libtool make autoconf pkg-config dpkg
+    - export VIRTUAL_ENV=/opt/venv
+    - python -m venv $VIRTUAL_ENV
+    - export PATH="$VIRTUAL_ENV/bin:$PATH"
+    - pip --no-cache-dir install -U pip setuptools wheel cmake
+    - pip --no-cache-dir install -r requirements.txt
   script:
     - buildozer -v android debug
   artifacts:
