@@ -1,11 +1,12 @@
+import codecs
 import os
 import sys
 import time
 import tempfile
 from pathlib import Path
 import numpy
-from plyer.facades import storagepath
 import qrcode
+from pyzbar.pyzbar import decode as qr_decode
 # import cv2
 import PIL.Image
 import kivy
@@ -30,7 +31,7 @@ if platform == "android":
 # Logger.debug("DEBUG: %s", primary_external_storage_path())
 
 from kivy.lang import Builder
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
