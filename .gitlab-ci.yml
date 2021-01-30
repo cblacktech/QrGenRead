@@ -1,0 +1,23 @@
+image: archlinux:latest
+
+stages:
+  - build
+
+build_apk_arm64-v8a:
+  stage: build
+  before_script:
+    - pacman -Syu --noconfirm
+    - pacman -S git base-devel --noconfirm
+    - pacman -S python python-pip --noconfirm
+    - pacman -S jdk8-openjdk --noconfirm
+    - pacman -S unzip zip ant automake gcc patch libtool make autoconf pkg-config dpkg --noconfirm
+    - export VIRTUAL_ENV=/opt/venv
+    - python -m venv $VIRTUAL_ENV
+    - export PATH="$VIRTUAL_ENV/bin:$PATH"
+    - pip --no-cache-dir install -U pip setuptools wheel cmake
+    - pip --no-cache-dir install -r requirements.txt
+  script:
+    - buildozer -v android debug
+  artifacts:
+    paths:
+      - bin/*.apk
