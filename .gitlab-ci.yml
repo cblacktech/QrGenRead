@@ -10,7 +10,7 @@ build_apk_arm64-v8a:
     - pacman -S git base-devel --noconfirm
     - pacman -S python python-pip --noconfirm
     - pacman -S jdk8-openjdk --noconfirm
-    - pacman -S unzip zip ant automake gcc patch libtool make autoconf pkg-config dpkg --noconfirm
+    - pacman -S unzip zip ant automake gcc patch libtool make autoconf pkg-config dpkg lld --noconfirm
     - export VIRTUAL_ENV=/opt/venv
     - python -m venv $VIRTUAL_ENV
     - export PATH="$VIRTUAL_ENV/bin:$PATH"
