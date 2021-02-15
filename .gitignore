@@ -2,6 +2,7 @@ __pycache__
 .vscode
 .idea
 .buildozer
+venv
 bin
 qrgenread
 !data
