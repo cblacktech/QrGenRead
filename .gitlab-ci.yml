@@ -21,3 +21,4 @@ build_apk_arm64-v8a:
   artifacts:
     paths:
       - bin/*.apk
+  when: manual
