@@ -3,7 +3,7 @@ buildozer==1.2.0
 kivy==2.0.0
 opencv-python==4.5.1.48
 pillow==8.1.0
-numpy==1.19.5
+numpy==1.20.1
 cython==0.29.21
 pyzbar-x==0.2.1
 python-for-android==2020.6.2
