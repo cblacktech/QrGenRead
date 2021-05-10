@@ -1,20 +1,33 @@
 import codecs
 import os
 import sys
-import time
 import tempfile
+import time
 from pathlib import Path
-import numpy
-import qrcode
-from pyzbar.pyzbar import decode as qr_decode
-# import cv2
-import PIL.Image
+
+import cv2
 import kivy
+import numpy
+import PIL.Image
+import qrcode
 from kivy.app import App
+from kivy.clock import Clock
+from kivy.core.image import Image as CoreImage
+from kivy.graphics.texture import Texture
+from kivy.lang import Builder
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.camera import Camera
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.image import Image as kiImage
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.utils import platform
+from plyer import notification, storagepath
+from pyzbar.pyzbar import decode as qr_decode
 
 if platform == "android":
-    from android.permissions import request_permissions, Permission
+    from android.permissions import Permission, request_permissions
     request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.CAMERA])
 
 # from kivy.logger import Logger
@@ -29,21 +42,6 @@ if platform == "android":
 # Config.write()
 # Logger.debug("DEBUG: primary_external_storage_path")
 # Logger.debug("DEBUG: %s", primary_external_storage_path())
-
-from kivy.lang import Builder
-from kivy.properties import ObjectProperty, StringProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.popup import Popup
-from kivy.uix.camera import Camera
-from kivy.uix.image import Image as kiImage
-from kivy.core.image import Image as CoreImage
-from kivy.graphics.texture import Texture
-from kivy.clock import Clock
-from kivy.uix.screenmanager import Screen, ScreenManager
-
-from plyer import storagepath
-from plyer import notification
 
 kivy.require('2.0.0')
 ui = Builder.load_file('app.kv')
